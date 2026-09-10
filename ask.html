@@ -1,13 +1,347 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Become AI discipline and study coach."><title>Ask NOVA — AI Discipline Coach</title><link rel="stylesheet" href="css/style.css"></head><body>
-<header class="site-header"><nav class="nav"><a href="index.html" class="brand">Become<span>AI</span></a><button class="nav-toggle" aria-label="Toggle menu">[ MENU ]</button><ul class="nav-links"><li><a href="index.html">Home</a></li><li><a href="assessment.html">Assessment</a></li><li><a href="tracker.html">Tracker</a></li><li><a href="challenge.html">Challenge</a></li><li><a href="workouts.html">Workouts</a></li><li><a href="ask.html">Ask AI</a></li></ul></nav></header>
-<section class="section"><div class="container ai-shell"><div class="ai-top"><div><span class="tag">BECOME AI / COACH</span><h1>Talk to NOVA.</h1><p>Discipline, study planning, habits and the workout system — in one chat.</p></div><button class="theme-toggle" id="themeToggle">☾ Dark mode</button></div>
-<div class="chat-window ai-window" id="chatWindow"><div class="ai-msg bot"><strong>NOVA</strong><br>Yo. I'm NOVA, your discipline coach. Tell me what you're struggling with, or ask me to build a study plan. I can use the discipline types and workout guidance built into this site.</div></div>
-<div class="ai-suggestions"><button class="ai-chip">Make me a 3-hour study plan</button><button class="ai-chip">How do I stop procrastinating?</button><button class="ai-chip">Which workout should I do?</button><button class="ai-chip">Help me stay consistent</button></div>
-<form id="chatForm"><div class="ai-input-row"><textarea id="chatInput" placeholder="Ask anything about discipline, studying or habits..." required></textarea><button class="btn btn-primary" type="submit">Send</button></div></form>
-<p class="form-note">AI responses are general guidance. For medical or injury questions, speak with a qualified professional.</p></div></section>
-<script src="js/types.js"></script><script src="js/main.js"></script><script>
-const KEY='becomeai_theme';const body=document.body,tt=document.getElementById('themeToggle');if(localStorage.getItem(KEY)==='dark'){body.classList.add('dark-mode');tt.textContent='☀ Light mode'}tt.onclick=()=>{body.classList.toggle('dark-mode');const d=body.classList.contains('dark-mode');localStorage.setItem(KEY,d?'dark':'light');tt.textContent=d?'☀ Light mode':'☾ Dark mode'};
-const win=document.getElementById('chatWindow'),form=document.getElementById('chatForm'),input=document.getElementById('chatInput');document.querySelectorAll('.ai-chip').forEach(b=>b.onclick=()=>{input.value=b.textContent;input.focus()});
-function add(text,who){const d=document.createElement('div');d.className='ai-msg '+who;d.innerHTML=who==='bot'?'<strong>NOVA</strong><br>'+text.replace(/\n/g,'<br>'):'<strong>You</strong><br>'+text.replace(/\n/g,'<br>');win.appendChild(d);win.scrollTop=win.scrollHeight;return d}
-form.onsubmit=async e=>{e.preventDefault();const q=input.value.trim();if(!q)return;add(q,'user');input.value='';const t=add('Thinking','bot');t.classList.add('typing');try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q})});const data=await r.json();t.remove();add(data.reply||data.error||'I could not answer that right now.','bot')}catch(err){t.remove();add('The AI server is not connected yet. Add your API key as a Cloudflare secret named GEMINI_API_KEY, then redeploy.','bot')}};
-</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Talk to NOVA, the AI discipline coach from Become AI."
+  >
+
+  <title>NOVA — Become AI</title>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header class="site-header">
+
+    <div class="container nav">
+
+      <a href="index.html" class="logo">
+        BECOME <span>AI</span>
+      </a>
+
+      <nav class="nav-links">
+
+        <a href="index.html">HOME</a>
+        <a href="ask.html">NOVA</a>
+        <a href="assessment.html">ASSESSMENT</a>
+        <a href="tracker.html">TRACKER</a>
+        <a href="challenge.html">CHALLENGE</a>
+
+      </nav>
+
+      <button class="nav-toggle">
+        [ MENU ]
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- MAIN -->
+
+  <main>
+
+    <section class="section">
+
+      <div class="container">
+
+        <div class="eyebrow">
+          AI DISCIPLINE COACH
+        </div>
+
+        <h1 class="section-title">
+          Talk to NOVA.
+        </h1>
+
+        <p class="section-subtitle">
+          Your personal discipline coach. Ask about studying,
+          procrastination, habits, routines, consistency, or workouts.
+        </p>
+
+
+        <!-- CHAT -->
+
+        <div class="panel">
+
+          <div
+            id="chatWindow"
+            class="chat-window"
+          >
+
+            <div class="msg bot">
+
+              Hey. I'm <strong>NOVA</strong>.
+
+              <br><br>
+
+              Tell me what you're struggling with and
+              I'll help you build a practical plan.
+
+              <span class="src">
+                BECOME AI / NOVA
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- SUGGESTIONS -->
+
+          <div class="suggestion-chips">
+
+            <button
+              class="suggestion-chip"
+              data-message="Make me a 3-hour study plan"
+            >
+              3-hour study plan
+            </button>
+
+            <button
+              class="suggestion-chip"
+              data-message="How do I stop procrastinating?"
+            >
+              Stop procrastinating
+            </button>
+
+            <button
+              class="suggestion-chip"
+              data-message="How can I become more disciplined?"
+            >
+              Become disciplined
+            </button>
+
+            <button
+              class="suggestion-chip"
+              data-message="Help me stay consistent"
+            >
+              Stay consistent
+            </button>
+
+          </div>
+
+
+          <!-- INPUT -->
+
+          <form
+            id="chatForm"
+            class="chat-input-row"
+          >
+
+            <input
+              id="chatInput"
+              type="text"
+              placeholder="Ask NOVA anything..."
+              autocomplete="off"
+              maxlength="4000"
+              required
+            >
+
+            <button
+              class="btn"
+              type="submit"
+            >
+              SEND
+            </button>
+
+          </form>
+
+
+          <!-- THEME -->
+
+          <button
+            class="btn btn-outline js-theme-toggle"
+            type="button"
+            style="margin-top:15px;"
+          >
+            ☾ DARK MODE
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+
+  <footer class="site-footer">
+
+    <div class="container footer-grid">
+
+      <div>
+        <strong>BECOME AI</strong>
+        <br>
+        Build discipline. Not just motivation.
+      </div>
+
+      <div class="footer-links">
+
+        <a href="index.html">HOME</a>
+        <a href="ask.html">NOVA</a>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+
+  <!-- JAVASCRIPT -->
+
+  <script src="js/types.js"></script>
+  <script src="js/main.js"></script>
+
+
+  <script>
+
+    const chatWindow =
+      document.getElementById("chatWindow");
+
+    const chatForm =
+      document.getElementById("chatForm");
+
+    const chatInput =
+      document.getElementById("chatInput");
+
+
+    /* Add message to chat */
+
+    function addMessage(text, type) {
+
+      const message =
+        document.createElement("div");
+
+      message.className =
+        "msg " + type;
+
+      message.textContent =
+        text;
+
+      chatWindow.appendChild(message);
+
+      chatWindow.scrollTop =
+        chatWindow.scrollHeight;
+
+      return message;
+    }
+
+
+    /* Send message to NOVA */
+
+    async function sendMessage(message) {
+
+      if (!message.trim()) return;
+
+      addMessage(message, "user");
+
+      chatInput.value = "";
+
+      const thinking =
+        addMessage("NOVA is thinking...", "bot");
+
+
+      try {
+
+        const response =
+          await fetch("/api/chat", {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              message: message
+            })
+
+          });
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Unable to contact NOVA."
+          );
+
+        }
+
+
+        thinking.textContent =
+          data.reply || "I couldn't generate a response.";
+
+      } catch (error) {
+
+        thinking.textContent =
+          "NOVA is currently unavailable. Make sure the Cloudflare API setup is complete.";
+
+        console.error(error);
+
+      }
+
+
+      chatWindow.scrollTop =
+        chatWindow.scrollHeight;
+    }
+
+
+    /* Form submit */
+
+    chatForm.addEventListener(
+      "submit",
+      function(event) {
+
+        event.preventDefault();
+
+        sendMessage(
+          chatInput.value
+        );
+
+      }
+    );
+
+
+    /* Suggestion buttons */
+
+    document
+      .querySelectorAll(".suggestion-chip")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            sendMessage(
+              button.dataset.message
+            );
+
+          }
+        );
+
+      });
+
+  </script>
+
+</body>
+</html>
